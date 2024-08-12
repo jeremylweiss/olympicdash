@@ -100,7 +100,82 @@ olympicsSummer |>
 
 ### Value boxes {height="25%"}
 
-Hello
+```{r}
+#| label: calculate-summer-values
+summer_most_golds <- olympicsSummer |>
+  filter(medal == "Gold") |>
+  count(team, sort = TRUE) |>
+  slice_head(n = 1)
+
+summer_most_silvers <- olympicsSummer |>
+  filter(medal == "Silver") |>
+  count(team, sort = TRUE) |>
+  slice_head(n = 1)
+
+summer_most_bronzes <- olympicsSummer |>
+  filter(medal == "Bronze") |>
+  count(team, sort = TRUE) |>
+  slice_head(n = 1)
+
+lowest_mileage_cty <- mpg |>
+  filter(cty == min(cty)) |>
+  distinct(cty) |>
+  pull(cty)
+
+highest_mileage_cty <- mpg |>
+  filter(cty == max(cty)) |>
+  distinct(cty) |>
+  pull(cty)
+  
+rounded_mean_city_mileage <- mpg |>
+  summarize(round(mean(cty), 2)) |>
+  pull()
+```
+
+<!-- ```{r}
+#| content: valuebox
+#| title: "Most Gold"
+#| icon: award-fill
+#| color: "#FFD700"
+list(
+  value = paste(lowest_mileage_cty, "mpg")
+)
+```
+
+```{r}
+#| content: valuebox
+#| title: "Most Silver"
+list(
+  icon = "award-fill",
+  color = "#C0C0C0",
+  value = paste(highest_mileage_cty, "mpg")
+)
+```
+-->
+
+::: {.valuebox icon="award-fill" color="#FFD700"}
+Most golds:
+
+`{r} summer_most_golds$n`
+
+`{r} as.character(summer_most_golds$team)`
+:::
+
+::: {.valuebox icon="award-fill" color="#C0C0C0"}
+Most silvers:
+
+`{r} summer_most_silvers$n`
+
+`{r} as.character(summer_most_silvers$team)`
+:::
+
+::: {.valuebox icon="award-fill" color="#CD7F32"}
+Most bronzes:
+
+`{r} summer_most_bronzes$n`
+
+`{r} as.character(summer_most_bronzes$team)`
+:::
 
 ### Data table {height="75%" .tabset}
 
@@ -119,8 +194,8 @@ olympicsSummer |>
   select(Team = team, Gold, Silver, Bronze) |>
   gt() |>
   data_color(
-    method = "numeric"#, 
-    #palette = "nord::aurora"
+    method = "numeric", 
+    palette = "nord::aurora"
   )
 ```
 :::
@@ -140,8 +215,8 @@ olympicsSummer |>
   select(Team = team, Gold, Silver, Bronze) |>
   gt() |>
   data_color(
-    method = "numeric"#, 
-    #palette = "nord::frost"
+    method = "numeric", 
+    palette = "nord::aurora"
   )
 ```
 :::
@@ -222,13 +297,90 @@ olympicsWinter |>
 
 ## Column {width="35%"}
 
+### Value boxes {height="25%"}
+
 ```{r}
-#| title: Medals by country
+#| label: calculate-winter-values
+winter_most_golds <- olympicsWinter |>
+  filter(medal == "Gold") |>
+  count(team, sort = TRUE) |>
+  slice_head(n = 1)
+
+winter_most_silvers <- olympicsWinter |>
+  filter(medal == "Silver") |>
+  count(team, sort = TRUE) |>
+  slice_head(n = 1)
+
+winter_most_bronzes <- olympicsWinter |>
+  filter(medal == "Bronze") |>
+  count(team, sort = TRUE) |>
+  slice_head(n = 1)
+```
+
+::: {.valuebox icon="award-fill" color="#FFD700"}
+Most golds:
+
+`{r} winter_most_golds$n`
+
+`{r} as.character(winter_most_golds$team)`
+:::
+
+::: {.valuebox icon="award-fill" color="#C0C0C0"}
+Most silvers:
+
+`{r} winter_most_silvers$n`
+
+`{r} as.character(winter_most_silvers$team)`
+:::
+
+::: {.valuebox icon="award-fill" color="#CD7F32"}
+Most bronzes:
+
+`{r} winter_most_bronzes$n`
+
+`{r} as.character(winter_most_bronzes$team)`
+:::
+
+### Data table {height="75%" .tabset}
+
+::: {.card title="Top 30 Total Medals"}
+
+Top 30 total medals in descending order
+
+```{r}
+## | title: Top 30 Total Medals
 olympicsWinter |>
   count(team, medal) |>
   pivot_wider(names_from = medal, values_from = n, values_fill = 0) |>
   mutate(Total = Bronze + Gold + Silver) |>
-  relocate(Team = team, Gold, Silver, Bronze, Total) |>
-  arrange(desc(Total), Team) |>
-  gt()
+  arrange(desc(Total), team) |>
+  slice_head(n=30) |>
+  select(Team = team, Gold, Silver, Bronze) |>
+  gt() |>
+  data_color(
+    method = "numeric", 
+    palette = "nord::aurora"
+  )
 ```
+:::
+
+::: {.card title="Bottom 30 Total Medals"}
+
+Bottom 30 total medals in ascending order
+
+```{r}
+## | title: Bottom 30 Total Medals
+olympicsWinter |>
+  count(team, medal) |>
+  pivot_wider(names_from = medal, values_from = n, values_fill = 0) |>
+  mutate(Total = Bronze + Gold + Silver) |>
+  arrange(desc(Total), team) |>
+  slice_tail(n=30) |>
+  select(Team = team, Gold, Silver, Bronze) |>
+  gt() |>
+  data_color(
+    method = "numeric", 
+    palette = "nord::aurora"
+  )
+```
+:::
