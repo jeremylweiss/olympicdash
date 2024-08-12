@@ -1,6 +1,13 @@
 ---
 title: "Olympic Games"
-format: html
+format: 
+  dashboard:
+    logo: images/olympics-logo.svg
+    nav-buttons:
+      icon: github
+      href: https://github.com/posit-conf-2024/olympicdash
+      aria-label: GitHub
+    orientation: columns
 ---
 
 ```{r}
@@ -23,14 +30,21 @@ olympics <- olympics_full |>
     season == "Summer",
     !is.na(medal)
   ) |>
-  separate_wider_delim(cols = team, names = c("team", "suffix"), delim = "-", too_many = "merge", too_few = "align_start") |>
+  separate_wider_delim(
+    cols = team, 
+    names = c("team", "suffix"), 
+    delim = "-", 
+    too_many = "merge", 
+    too_few = "align_start"
+  ) |>
   select(-suffix) |>
   mutate(medal = fct_relevel(medal, "Bronze", "Silver", "Gold"))
 ```
 
-## Medals by sport
+## Column - Graphs {width = 50%}
 
 ```{r}
+#| title: Medals by Sport
 olympics |>
   mutate(
     sport = fct_lump_n(sport, n = 15),
@@ -55,9 +69,10 @@ olympics |>
   )
 ```
 
-## Medals by year
+<!-- ## Medals by year -->
 
 ```{r}
+#| title: Medals by Year
 olympics |>
   count(year, medal) |>
   ggplot(aes(x = year, y = n, color = medal)) +
@@ -79,9 +94,10 @@ olympics |>
   )
 ```
 
-## Medals by country
+## Column - Table {width = 50%}
 
 ```{r}
+#| title: Medals by Country
 olympics |>
   count(team, medal) |>
   pivot_wider(names_from = medal, values_from = n, values_fill = 0) |>
